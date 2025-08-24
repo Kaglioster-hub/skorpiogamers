@@ -1,15 +1,23 @@
 {
   "name": "SkorpioGamers",
-  "short_name": "Skorpio",
-  "start_url": "/",
+  "short_name": "SkorpioG",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#2afadf",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "scope": "./",
   "icons": [
     {
-      "src": "/assets/logo.png",
+      "src": "../assets/logo.png",
       "sizes": "192x192",
       "type": "image/png"
+    },
+    {
+      "src": "../assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
-  ]
+  ],
+  "description": "Offerte di videogiochi in tempo reale da Steam, Epic e Humble. Auto-aggiornato, ultraleggero e veloce."
 }
