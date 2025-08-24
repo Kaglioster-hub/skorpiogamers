@@ -1,0 +1,1 @@
+import fs from'fs';export default function handler(req,res){const q=(req.query.q||'').toLowerCase();if(!q)return res.status(400).json({error:'Missing'});const d=JSON.parse(fs.readFileSync('site/deals.json','utf8'));res.status(200).json(d.filter(x=>x.title.toLowerCase().includes(q)).slice(0,10));}

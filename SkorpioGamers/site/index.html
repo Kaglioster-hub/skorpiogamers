@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <title>⚡ SkorpioGamers – Offerte Giochi</title>
+  <meta name="description" content="Le migliori offerte auto aggiornate">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script>
+    async function searchGames(){
+      let q=document.getElementById("q").value;
+      let res=await fetch(`/api/search?q=${q}`);
+      let data=await res.json();
+      let grid=document.getElementById("results");
+      grid.innerHTML=data.map(d=>`
+        <div class="card">
+          <h3>${d.title}</h3>
+          <p class="price">${d.salePrice}$ (-${d.savings}%)</p>
+          <a href="/api/track?url=${d.url}?partner=SKORPIO">Compra</a>
+        </div>`).join("");
+    }
+  </script>
+</head>
+<body>
+  <h1>⚡ SkorpioGamers</h1>
+  <input id="q" placeholder="Cerca gioco..." onkeyup="searchGames()">
+  <div id="results" class="grid"></div>
+  <footer>Ultimo update 2025-08-24</footer>
+</body>
+</html>

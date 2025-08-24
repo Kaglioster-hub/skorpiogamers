@@ -1,0 +1,1 @@
+import fs from'fs';export default function handler(req,res){try{const u=String(req.query.url||'').trim();if(!u)return res.redirect(302,'/');let c={};try{c=JSON.parse(fs.readFileSync('site/clicks.json','utf8'))}catch{};c[u]=(c[u]||0)+1;fs.writeFileSync('site/clicks.json',JSON.stringify(c));return res.redirect(302,u);}catch{return res.redirect(302,'/');}}

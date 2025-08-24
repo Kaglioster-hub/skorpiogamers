@@ -1,0 +1,1 @@
+import fs from'fs';export default function handler(req,res){try{const c=JSON.parse(fs.readFileSync('site/clicks.json','utf8'));const t=Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,10);res.status(200).json(t);}catch{res.status(200).json([]);}}
