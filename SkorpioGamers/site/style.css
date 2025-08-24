@@ -1,0 +1,210 @@
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #050505;
+  color: #f5f5f5;
+  line-height: 1.6;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== HEADER ===== */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 20px;
+  background: #050505;
+  border-bottom: 1px solid #222;
+}
+header h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #ff0080, #7928ca, #2afadf);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: glow 6s linear infinite;
+}
+header .subtitle {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+/* ===== INPUT ===== */
+input[type="text"], 
+input[type="email"] {
+  padding: 12px;
+  width: 100%;
+  max-width: 500px;
+  margin: 15px auto;
+  display: block;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: #111;
+  color: #fff;
+  font-size: 1rem;
+  transition: box-shadow .3s ease, transform .2s ease;
+}
+input:focus {
+  outline: none;
+  border-color: #2afadf;
+  box-shadow: 0 0 14px rgba(42,250,223,0.6);
+  transform: scale(1.02);
+}
+input::placeholder {
+  color: #666;
+}
+
+/* ===== BUTTON ===== */
+button, 
+a.button {
+  display: inline-block;
+  padding: 12px 20px;
+  background: linear-gradient(90deg, #2afadf, #4c83ff);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease, background .3s;
+}
+button:hover, 
+a.button:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 18px #2afadf;
+  background: linear-gradient(90deg, #4c83ff, #2afadf);
+}
+
+/* ===== GRID ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+.card {
+  background: #151515;
+  border-radius: 14px;
+  padding: 15px;
+  box-shadow: 0 0 14px rgba(0,0,0,0.6);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 25px rgba(42,250,223,0.6);
+}
+.card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.card h3 {
+  font-size: 1.05rem;
+  margin: 6px 0;
+}
+.price {
+  font-weight: bold;
+  color: #2afadf;
+  margin: 6px 0 10px;
+  font-size: 1rem;
+}
+
+/* ===== SECTIONS ===== */
+section {
+  padding: 30px 15px;
+}
+section h2 {
+  font-size: 1.4rem;
+  margin-bottom: 18px;
+  color: #2afadf;
+  text-shadow: 0 0 10px rgba(42,250,223,0.4);
+}
+
+/* ===== NEWSLETTER ===== */
+.newsletter {
+  background: #111;
+  padding: 25px 20px;
+  border-radius: 12px;
+  margin: 40px auto;
+  max-width: 500px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+.newsletter p {
+  margin-bottom: 14px;
+  color: #ccc;
+}
+.newsletter input[type="email"] {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  margin-top: 40px;
+  padding: 20px;
+  font-size: .85rem;
+  background: #0f0f0f;
+  color: #888;
+  border-top: 1px solid #222;
+}
+footer a {
+  color: #2afadf;
+  margin: 0 10px;
+  text-decoration: none;
+}
+footer a:hover {
+  text-decoration: underline;
+}
+footer .small {
+  font-size: .75rem;
+  margin-top: 10px;
+  display: block;
+  color: #666;
+}
+
+/* ===== CANVAS ===== */
+canvas {
+  max-width: 100%;
+  width: 100%;
+  margin: 20px auto;
+  background: #111;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 18px rgba(42,250,223,0.2);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes glow {
+  0% { text-shadow: 0 0 8px #2afadf; }
+  50% { text-shadow: 0 0 16px #7928ca; }
+  100% { text-shadow: 0 0 8px #2afadf; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  header h1 { font-size: 1.7rem; }
+  header .subtitle { font-size: 0.8rem; }
+  .grid { gap: 14px; padding: 15px; }
+  .card { padding: 12px; }
+}
+
+@media (max-width: 480px) {
+  header h1 { font-size: 1.5rem; }
+  input[type="text"], input[type="email"] { width: 90%; font-size: 0.9rem; }
+  button, a.button { padding: 10px 16px; font-size: 0.9rem; }
+  section h2 { font-size: 1.2rem; }
+}
