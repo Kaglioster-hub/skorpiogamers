@@ -1,1 +1,15 @@
 .vercel
+
+# Node.js
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Build
+.next
+dist
+out
+
+# OS
+.DS_Store
+Thumbs.db
