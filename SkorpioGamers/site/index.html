@@ -7,16 +7,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#000000">
 
   <!-- SEO & OpenGraph -->
   <meta property="og:title" content="⚡ SkorpioGamers – Offerte Videogiochi">
   <meta property="og:description" content="Scopri i migliori sconti su Steam, Epic e Humble.">
-  <meta property="og:image" content="assets/logo.png">
+  <meta property="og:image" content="../assets/logo.png">
   <meta property="og:type" content="website">
-  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="icon" href="../assets/logo.png" type="image/png">
 
   <!-- Structured Data JSON-LD -->
   <script type="application/ld+json">
@@ -102,7 +102,7 @@
       }
       grid.innerHTML=data.map(d=>`
         <div class="card">
-          <img src="${d.thumb||'assets/placeholder.png'}" alt="${d.title}" loading="lazy">
+          <img src="${d.thumb||'../assets/placeholder.png'}" alt="${d.title}" loading="lazy">
           <h3>${d.title}</h3>
           <p class="price">${d.salePrice}$ (-${Math.round(d.savings)}%)</p>
           <a class="button" href="api/track?url=${encodeURIComponent(d.url)}&partner=SKORPIO" target="_blank" rel="noopener noreferrer">Compra</a>
@@ -122,6 +122,7 @@
 <body>
   <!-- HEADER -->
   <header>
+    <img src="../assets/logo.png" alt="Logo SkorpioGamers" class="logo">
     <h1>⚡ SkorpioGamers</h1>
     <p class="subtitle">Le offerte migliori in tempo reale – più veloce e leggero di ogni store ufficiale.</p>
   </header>
