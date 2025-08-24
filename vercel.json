@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "name": "skorpiogamers",
+  "alias": [
+    "sg.vrabo.it"
+  ],
+  "builds": [
+    {
+      "src": "site/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/sw.js",
+      "dest": "/site/sw.js"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/site/manifest.json"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/site/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/site/$1"
+    }
+  ]
+}
