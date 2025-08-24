@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://sg.vrabo.it/sitemap.xml
