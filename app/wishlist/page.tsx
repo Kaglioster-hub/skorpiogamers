@@ -1,100 +1,98 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+
+type Wish = {
+  id: string;
+  title: string;
+  price: string;
+  thumb: string;
+};
 
 export default function WishlistPage() {
-  const [items, setItems] = useState<any[]>([]);
+  const [wishlist, setWishlist] = useState<Wish[]>([]);
 
-  // carica da localStorage
+  // Carica dal localStorage
   useEffect(() => {
-    try {
-      const w = JSON.parse(localStorage.getItem("skg:wishlist") || "[]");
-      setItems(Array.isArray(w) ? w : []);
-    } catch {
-      setItems([]);
-    }
+    const stored = localStorage.getItem("wishlist");
+    if (stored) setWishlist(JSON.parse(stored));
   }, []);
 
-  function remove(i: number) {
-    const updated = items.filter((_, idx) => idx !== i);
-    setItems(updated);
-    localStorage.setItem("skg:wishlist", JSON.stringify(updated));
-  }
+  // Salva ogni volta che cambia
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }, [wishlist]);
 
-  function clear() {
-    if (!confirm("Vuoi svuotare la wishlist?")) return;
-    setItems([]);
-    localStorage.removeItem("skg:wishlist");
-  }
-
-  function exportCSV() {
-    const header = "Titolo,Prezzo,Store,URL,Data\n";
-    const rows = items
-      .map(
-        (x) =>
-          `"${x.title}","${x.price}","${x.store}","${x.url}","${x.when || ""}"`
-      )
-      .join("\n");
-    const csv = header + rows;
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "wishlist.csv";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+  // Rimuovi item
+  const removeItem = (id: string) => {
+    setWishlist((prev) => prev.filter((w) => w.id !== id));
+  };
 
   return (
-    <main style={{ maxWidth: 960, margin: "0 auto", padding: 16 }}>
-      <h1 style={{ fontSize: "1.8rem", marginBottom: 12 }}>⭐ Wishlist</h1>
+    <main className="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black text-white px-6 py-16">
+      {/* HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-center mb-12"
+      >
+        <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500 bg-clip-text text-transparent drop-shadow-lg">
+          ⭐ La tua Wishlist
+        </h1>
+        <p className="mt-4 text-zinc-400">
+          Qui trovi i giochi che hai salvato per non perderti mai un’offerta.
+        </p>
+      </motion.div>
 
-      {!items.length && <p className="muted">Nessun gioco salvato.</p>}
+      {/* LISTA */}
+      {wishlist.length === 0 ? (
+        <p className="text-center text-zinc-500">
+          ❌ Nessun gioco ancora aggiunto. Vai nella sezione{" "}
+          <span className="text-cyan-400 font-bold">Trending</span> e aggiungilo!
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {wishlist.map((item, i) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ scale: 1.03 }}
+              className="relative bg-gradient-to-br from-zinc-900/90 to-zinc-800/80 rounded-3xl shadow-lg overflow-hidden card-glow"
+            >
+              <img
+                src={item.thumb}
+                alt={item.title}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-5">
+                <h3 className="font-bold text-lg truncate">{item.title}</h3>
+                <p className="text-emerald-400 font-semibold mt-2">
+                  {item.price}$
+                </p>
 
-      {items.length > 0 && (
-        <>
-          <div style={{ marginBottom: 12 }}>
-            <button className="button sm" onClick={exportCSV}>
-              ⬇️ Esporta CSV
-            </button>
-            <button className="button sm ghost" onClick={clear}>
-              🗑️ Svuota
-            </button>
-          </div>
-
-          <div className="grid">
-            {items.map((x, i) => (
-              <article key={i} className="card">
-                <div className="card-body">
-                  <h3 className="card-title">{x.title}</h3>
-                  <p className="price">
-                    {x.price ? `${x.price}$` : "—"}{" "}
-                    <span className="pill">{x.store}</span>
-                  </p>
-                  <div className="actionsRow">
-                    {x.url && (
-                      <a
-                        className="button sm"
-                        href={`/api/track?url=${encodeURIComponent(
-                          x.url
-                        )}&partner=SKORPIO`}
-                        target="_blank"
-                        rel="noopener"
-                      >
-                        Compra
-                      </a>
-                    )}
-                    <button className="sm ghost" onClick={() => remove(i)}>
-                      Rimuovi
-                    </button>
-                  </div>
-                  <small className="muted">
-                    Aggiunto il {x.when || "?"}
-                  </small>
+                <div className="mt-4 flex justify-between items-center">
+                  <a
+                    href={`https://www.cheapshark.com/redirect?dealID=${item.id}`}
+                    target="_blank"
+                    className="px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-600 to-cyan-500 hover:scale-105 transition"
+                  >
+                    🚀 Vai allo Store
+                  </a>
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="px-3 py-2 rounded-lg text-sm font-semibold bg-red-600 hover:bg-red-700 transition"
+                  >
+                    ❌ Rimuovi
+                  </button>
                 </div>
-              </article>
-            ))}
-          </div>
-        </>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       )}
     </main>
   );
