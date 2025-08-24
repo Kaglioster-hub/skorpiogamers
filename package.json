@@ -12,22 +12,21 @@
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.5",
     "autoprefixer": "^10.4.21",
-    "framer-motion": "^11.2.10",
-    "i18next": "^23.15.1",
+    "framer-motion": "^11.18.2",
+    "i18next": "^25.4.1",
     "next": "14.2.4",
     "postcss": "^8.4.35",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-i18next": "^15.0.0",
-    "recharts": "^2.10.3",
+    "react-i18next": "^15.7.2",
+    "recharts": "^2.15.4",
     "swr": "^2.2.5",
     "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
-    "@types/node": "^20.14.10",
-    "@types/react": "^18.3.5",
+    "@types/node": "^20.19.11",
+    "@types/react": "^18.3.24",
     "@types/react-dom": "^18.3.0",
-    "@types/framer-motion": "^11.2.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.2"
   }
 }
