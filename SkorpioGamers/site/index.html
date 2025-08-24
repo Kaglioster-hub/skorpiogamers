@@ -3,61 +3,109 @@
 <head>
   <meta charset="utf-8">
   <title>⚡ SkorpioGamers – Offerte Giochi in Tempo Reale</title>
-  <meta name="description" content="Le migliori offerte di videogiochi su Steam, Epic, Humble. Auto aggiornato ogni giorno.">
+  <meta name="description" content="Le migliori offerte di videogiochi su Steam, Epic, Humble e altri store. Aggiornato automaticamente ogni giorno.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="/assets/style.css">
-  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#000000">
 
   <!-- SEO & OpenGraph -->
-  <meta property="og:title" content="SkorpioGamers – Offerte Videogiochi">
-  <meta property="og:description" content="Scopri i migliori sconti su Steam, Epic, Humble.">
-  <meta property="og:image" content="/assets/logo.png">
+  <meta property="og:title" content="⚡ SkorpioGamers – Offerte Videogiochi">
+  <meta property="og:description" content="Scopri i migliori sconti su Steam, Epic e Humble.">
+  <meta property="og:image" content="assets/logo.png">
   <meta property="og:type" content="website">
+  <link rel="icon" href="assets/logo.png" type="image/png">
 
-  <!-- Chart.js for trending stats -->
+  <!-- Structured Data JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SkorpioGamers",
+    "url": "https://sg.vrabo.it",
+    "description": "Raccoglitore offerte videogiochi da Steam, Epic, Humble, auto-aggiornato",
+    "applicationCategory": "Game",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "USD",
+      "lowPrice": "0",
+      "highPrice": "59.99"
+    }
+  }
+  </script>
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
     // ====== FUNZIONI CLIENT ======
     async function loadDeals(){
-      let res = await fetch("/deals.json");
-      let data = await res.json();
-      renderGrid("top-deals", data.slice(0,12));
+      try {
+        let res = await fetch("deals.json");
+        let data = await res.json();
+        renderGrid("top-deals", data.slice(0, 12));
+      } catch(e){
+        document.getElementById("top-deals").innerHTML = "<p>⚠️ Nessuna offerta disponibile al momento.</p>";
+      }
     }
 
     async function loadTrending(){
-      let res = await fetch("/api/stats");
-      let data = await res.json();
-      const ctx = document.getElementById("trendChart").getContext("2d");
-      new Chart(ctx,{
-        type:'bar',
-        data:{
-          labels:data.map(([u,_])=>u.substring(0,30)),
-          datasets:[{label:'Click utenti',data:data.map(([_,c])=>c),backgroundColor:'#2afadf'}]
-        }
-      });
+      try {
+        let res = await fetch("api/stats");
+        if(!res.ok) res = await fetch("history.json"); // fallback
+        let data = await res.json();
+        const ctx = document.getElementById("trendChart").getContext("2d");
+        new Chart(ctx,{
+          type:'bar',
+          data:{
+            labels:data.map(([u,_])=>u.substring(0,25)),
+            datasets:[{
+              label:'Click utenti',
+              data:data.map(([_,c])=>c),
+              backgroundColor:'#2afadf'
+            }]
+          },
+          options:{
+            responsive:true,
+            plugins:{legend:{labels:{color:'#fff'}}},
+            scales:{
+              x:{ticks:{color:'#aaa'}},
+              y:{ticks:{color:'#aaa'}}
+            }
+          }
+        });
+      } catch(e){
+        document.getElementById("trendChart").outerHTML = "<p>⚠️ Trend non disponibile</p>";
+      }
     }
 
     async function searchGames(){
       let q = document.getElementById("q").value.trim();
       if(!q){return loadDeals();}
-      let res = await fetch(`/api/search?q=${q}`);
-      let data = await res.json();
-      renderGrid("top-deals", data);
+      try {
+        let res = await fetch(`api/search?q=${encodeURIComponent(q)}`);
+        let data = await res.json();
+        renderGrid("top-deals", data);
+      } catch(e){
+        document.getElementById("top-deals").innerHTML = "<p>Errore durante la ricerca.</p>";
+      }
     }
 
     function renderGrid(target,data){
       let grid=document.getElementById(target);
-      if(!data.length){grid.innerHTML="<p>Nessun risultato trovato.</p>";return;}
+      if(!data.length){
+        grid.innerHTML="<p>Nessun risultato trovato.</p>";
+        return;
+      }
       grid.innerHTML=data.map(d=>`
         <div class="card">
-          <img src="${d.thumb||'/assets/placeholder.png'}" alt="">
+          <img src="${d.thumb||'assets/placeholder.png'}" alt="${d.title}" loading="lazy">
           <h3>${d.title}</h3>
           <p class="price">${d.salePrice}$ (-${Math.round(d.savings)}%)</p>
-          <a href="/api/track?url=${d.url}?partner=SKORPIO">Compra</a>
+          <a class="button" href="api/track?url=${encodeURIComponent(d.url)}&partner=SKORPIO" target="_blank" rel="noopener noreferrer">Compra</a>
         </div>
       `).join("");
     }
@@ -65,7 +113,9 @@
     window.onload=()=>{
       loadDeals();
       loadTrending();
-      if('serviceWorker'in navigator){navigator.serviceWorker.register('/sw.js');}
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.register('sw.js').catch(()=>console.log("SW non disponibile"));
+      }
     };
   </script>
 </head>
@@ -73,7 +123,7 @@
   <!-- HEADER -->
   <header>
     <h1>⚡ SkorpioGamers</h1>
-    <p class="subtitle">Tutte le offerte in tempo reale – più leggero di Steam, più potente di tutti.</p>
+    <p class="subtitle">Le offerte migliori in tempo reale – più veloce e leggero di ogni store ufficiale.</p>
   </header>
 
   <!-- SEARCH -->
@@ -105,8 +155,8 @@
 
   <!-- FOOTER -->
   <footer>
-    <p>⚡ SkorpioGamers – Ultimo update auto: 2025-08-24</p>
-    <p><a href="/newsletter.html">Newsletter</a> · <a href="/trending.html">Trending</a> · <a href="/sitemap.xml">Sitemap</a></p>
+    <p>⚡ SkorpioGamers – Ultimo update: 2025-08-24</p>
+    <p><a href="newsletter.html">Newsletter</a> · <a href="trending.html">Trending</a> · <a href="sitemap.xml">Sitemap</a></p>
     <p class="small">Made with ❤️ da Davide | Legal · Privacy · Cookies</p>
   </footer>
 </body>
