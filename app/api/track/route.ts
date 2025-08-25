@@ -15,12 +15,10 @@ export async function GET(req: NextRequest) {
       return new Response("Missing url", { status: 400 });
     }
 
-    // Basic check (evita open redirect malevoli)
     if (!/^https?:\/\//i.test(url)) {
       return new Response("Invalid url", { status: 400 });
     }
 
-    // Qui puoi salvare i click su DB, Supabase, Planetscale o anche un file JSON
     console.log("Affiliate click:", {
       url,
       store,
