@@ -30,11 +30,11 @@ export async function GET(req: NextRequest) {
       ua: req.headers.get("user-agent") || "unknown",
     });
 
-    // ✅ Fix: redirect corretto con headers
+    // ✅ Redirect corretto
     return new Response(null, {
       status: 302,
       headers: {
-        location: url,
+        Location: url,
         "cache-control": "no-store",
       },
     });
