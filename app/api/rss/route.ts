@@ -1,4 +1,7 @@
-export const runtime = "edge";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const runtime = "edge"; // opzionale ma ok per te
+
 
 function slugify(s: string) {
   return s

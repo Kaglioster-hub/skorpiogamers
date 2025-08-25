@@ -1,4 +1,6 @@
-// app/api/deals/route.ts
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const runtime = "edge"; // opzionale ma ok per te
 import { NextRequest } from "next/server";
 
 const CHEAPSHARK_BASE = "https://www.cheapshark.com/api/1.0";
@@ -21,8 +23,26 @@ const STORE_NAMES: Record<string, string> = {
   "18": "epic",
   "21": "gamesplanet",
   "24": "allyouplay",
-  // (altri opzionali)
 };
+
+// Costruisce URL affiliato oppure fallback
+function buildAffiliateUrl(store: string, slug: string, steamAppID?: string, dealID?: string) {
+  const AFFILIATE: Record<string, string | undefined> = {
+    steam: process.env.AFF_STEAM,
+    gog: process.env.AFF_GOG,
+    humble: process.env.AFF_HUMBLE,
+    epic: process.env.AFF_EPIC,
+    gamesplanet: process.env.AFF_GAMESPLANET,
+  };
+
+  if (AFFILIATE[store]) {
+    return AFFILIATE[store]!
+      .replace("{APPID}", steamAppID || "")
+      .replace("{SLUG}", slug);
+  }
+
+  return `https://www.cheapshark.com/redirect?dealID=${dealID}`;
+}
 
 function mapDeal(d: CheapSharkDeal) {
   const sale = Number(d.salePrice);
@@ -30,10 +50,8 @@ function mapDeal(d: CheapSharkDeal) {
   const savings = Number(d.savings);
   const store = STORE_NAMES[d.storeID] || d.storeID || "unknown";
   const slug = (d.title || "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-  const target =
-    d.steamAppID && store === "steam"
-      ? `https://store.steampowered.com/app/${d.steamAppID}`
-      : `https://www.cheapshark.com/redirect?dealID=${d.dealID}`;
+
+  const target = buildAffiliateUrl(store, slug, d.steamAppID, d.dealID);
 
   return {
     title: d.title,
@@ -55,9 +73,9 @@ async function fetchDeals(params: {
   size: number;
 }) {
   const url = new URL(`${CHEAPSHARK_BASE}/deals`);
-  url.searchParams.set("upperPrice", "200");   // non troppo stringente
-  url.searchParams.set("pageSize", "120");     // batch ampio
-  url.searchParams.set("sortBy", "Savings");   // base per risparmio
+  url.searchParams.set("upperPrice", "200");
+  url.searchParams.set("pageSize", "120");
+  url.searchParams.set("sortBy", "Savings");
 
   if (params.store) {
     const storeId = Object.entries(STORE_NAMES).find(([, n]) => n === params.store)?.[0];
@@ -70,13 +88,11 @@ async function fetchDeals(params: {
 
   let arr = raw.map(mapDeal);
 
-  // filtro testuale
   if (params.q) {
     const qq = params.q.toLowerCase();
     arr = arr.filter((x) => x.title.toLowerCase().includes(qq));
   }
 
-  // ordinamenti
   switch (params.sort) {
     case "best":
     case "savings":
@@ -90,8 +106,6 @@ async function fetchDeals(params: {
       break;
     case "alpha":
       arr.sort((a, b) => a.title.localeCompare(b.title));
-      break;
-    default:
       break;
   }
 
@@ -113,6 +127,9 @@ export async function GET(req: NextRequest) {
     return Response.json(data, { headers: { "cache-control": "no-store" } });
   } catch (e) {
     console.error("[/api/deals] error:", e);
-    return Response.json({ page: 1, size: 0, count: 0, items: [], error: "Deals API error" }, { status: 500 });
+    return Response.json(
+      { page: 1, size: 0, count: 0, items: [], error: "Deals API error" },
+      { status: 500 }
+    );
   }
 }
