@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-export const runtime = "edge"; // opzionale ma ok per te
+export const runtime = "edge";
+
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -29,8 +30,11 @@ export async function GET(req: NextRequest) {
       ua: req.headers.get("user-agent") || "unknown",
     });
 
-    return Response.redirect(url, 302, {
+    // ✅ Fix: redirect corretto con headers
+    return new Response(null, {
+      status: 302,
       headers: {
+        location: url,
         "cache-control": "no-store",
       },
     });
