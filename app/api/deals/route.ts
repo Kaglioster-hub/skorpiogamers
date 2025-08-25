@@ -1,6 +1,8 @@
+// app/api/deals/route.ts
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-export const runtime = "edge"; // opzionale ma ok per te
+export const runtime = "edge";
+
 import { NextRequest } from "next/server";
 
 const CHEAPSHARK_BASE = "https://www.cheapshark.com/api/1.0";
@@ -20,27 +22,31 @@ const STORE_NAMES: Record<string, string> = {
   "1": "steam",
   "7": "gog",
   "11": "humble",
-  "18": "epic",
+  "25": "epic",        // ✅ correggi 18 -> 25
   "21": "gamesplanet",
   "24": "allyouplay",
 };
 
-// Costruisce URL affiliato oppure fallback
-function buildAffiliateUrl(store: string, slug: string, steamAppID?: string, dealID?: string) {
+// costruisce URL affiliato (usa .env se presente) o fallback a CheapShark
+function buildAffiliateUrl(
+  store: string,
+  slug: string,
+  steamAppID?: string,
+  dealID?: string
+) {
   const AFFILIATE: Record<string, string | undefined> = {
     steam: process.env.AFF_STEAM,
     gog: process.env.AFF_GOG,
     humble: process.env.AFF_HUMBLE,
     epic: process.env.AFF_EPIC,
     gamesplanet: process.env.AFF_GAMESPLANET,
+    allyouplay: process.env.AFF_ALLYOUPLAY,
   };
 
-  if (AFFILIATE[store]) {
-    return AFFILIATE[store]!
-      .replace("{APPID}", steamAppID || "")
-      .replace("{SLUG}", slug);
+  const tpl = AFFILIATE[store];
+  if (tpl) {
+    return tpl.replace("{APPID}", steamAppID || "").replace("{SLUG}", slug);
   }
-
   return `https://www.cheapshark.com/redirect?dealID=${dealID}`;
 }
 
@@ -51,31 +57,35 @@ function mapDeal(d: CheapSharkDeal) {
   const store = STORE_NAMES[d.storeID] || d.storeID || "unknown";
   const slug = (d.title || "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-  const target = buildAffiliateUrl(store, slug, d.steamAppID, d.dealID);
-
   return {
+    id: d.dealID,
     title: d.title,
+    slug,
+    store,
+    storeId: d.storeID,
     salePrice: sale,
     fullPrice: full,
-    savings,
-    url: target,
+    discountPct: Math.round(savings), // comodo da mostrare
+    savings,                          // grezzo (xx.xx)
+    url: buildAffiliateUrl(store, slug, d.steamAppID, d.dealID),
     thumb: d.thumb || null,
-    store,
-    slug,
   };
 }
 
 async function fetchDeals(params: {
   q?: string;
   store?: string;
-  sort?: string;
+  sort?: "best" | "savings" | "priceLow" | "priceHigh" | "alpha";
   page: number;
   size: number;
+  minSavings?: number;
+  maxPrice?: number;
 }) {
   const url = new URL(`${CHEAPSHARK_BASE}/deals`);
-  url.searchParams.set("upperPrice", "200");
-  url.searchParams.set("pageSize", "120");
-  url.searchParams.set("sortBy", "Savings");
+  // usa upperPrice alto ma permetti filtro successivo lato server
+  url.searchParams.set("upperPrice", String(Math.min(Math.max(params.maxPrice ?? 200, 1), 999)));
+  url.searchParams.set("pageSize", "120");   // batch ampio per filtrare/ordinare
+  url.searchParams.set("sortBy", "Savings"); // base
 
   if (params.store) {
     const storeId = Object.entries(STORE_NAMES).find(([, n]) => n === params.store)?.[0];
@@ -88,11 +98,21 @@ async function fetchDeals(params: {
 
   let arr = raw.map(mapDeal);
 
+  // filtro testuale
   if (params.q) {
     const qq = params.q.toLowerCase();
     arr = arr.filter((x) => x.title.toLowerCase().includes(qq));
   }
 
+  // filtro minSavings / maxPrice (se impostati)
+  if (typeof params.minSavings === "number") {
+    arr = arr.filter((x) => x.savings >= params.minSavings!);
+  }
+  if (typeof params.maxPrice === "number") {
+    arr = arr.filter((x) => x.salePrice <= params.maxPrice!);
+  }
+
+  // ordinamenti
   switch (params.sort) {
     case "best":
     case "savings":
@@ -107,12 +127,18 @@ async function fetchDeals(params: {
     case "alpha":
       arr.sort((a, b) => a.title.localeCompare(b.title));
       break;
+    default:
+      // già ragionato su Savings
+      break;
   }
 
   const count = arr.length;
-  const start = (params.page - 1) * params.size;
-  const end = start + params.size;
-  return { page: params.page, size: params.size, count, items: arr.slice(start, end) };
+  const size = Math.min(60, Math.max(6, params.size));
+  const page = Math.max(1, params.page);
+  const start = (page - 1) * size;
+  const end = start + size;
+
+  return { page, size, count, items: arr.slice(start, end) };
 }
 
 export async function GET(req: NextRequest) {
@@ -120,10 +146,33 @@ export async function GET(req: NextRequest) {
     const sp = new URL(req.url).searchParams;
     const q = sp.get("q") || undefined;
     const store = sp.get("store") || undefined;
-    const sort = (sp.get("sort") || "best").toLowerCase();
+
+    const sortParam = (sp.get("sort") || "best").toLowerCase();
+    const sort = ["best", "savings", "pricelow", "pricehigh", "alpha"].includes(sortParam)
+      ? (sortParam.replace("pricelow", "priceLow").replace("pricehigh", "priceHigh") as
+          | "best"
+          | "savings"
+          | "priceLow"
+          | "priceHigh"
+          | "alpha")
+      : "best";
+
     const page = Math.max(1, parseInt(sp.get("page") || "1", 10));
     const size = Math.min(60, Math.max(6, parseInt(sp.get("size") || "24", 10)));
-    const data = await fetchDeals({ q, store, sort, page, size });
+
+    const minSavings = sp.get("minSavings");
+    const maxPrice = sp.get("maxPrice");
+
+    const data = await fetchDeals({
+      q,
+      store,
+      sort,
+      page,
+      size,
+      minSavings: minSavings ? Number(minSavings) : undefined,
+      maxPrice: maxPrice ? Number(maxPrice) : undefined,
+    });
+
     return Response.json(data, { headers: { "cache-control": "no-store" } });
   } catch (e) {
     console.error("[/api/deals] error:", e);
