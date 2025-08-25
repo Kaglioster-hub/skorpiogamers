@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { buildTracked } from "@/app/lib/tracking";
+import { buildTracked } from "@/lib/tracking";  // ✅ FIX QUI
 
 export type Deal = {
   title: string;
