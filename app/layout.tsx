@@ -1,4 +1,3 @@
-// app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -15,3 +14,26 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL("https://sg.vrabo.it"),
 };
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="it" suppressHydrationWarning>
+      <body>
+        <ThemeProvider>
+          <header className="py-4 border-b border-neutral-900/60">
+            <div className="mx-auto max-w-6xl px-6 flex items-center justify-center gap-3">
+              <span className="sr-only">SkorpioGamers 3050</span>
+              <nav className="flex items-center gap-3" aria-label="Navigazione principale">
+                <Link href="/trending" className="chip">🔥 Trending</Link>
+                <Link href="/wishlist" className="chip">⭐ Wishlist</Link>
+                <Link href="/newsletter" className="chip">📧 Newsletter</Link>
+                <button id="theme-toggle" className="chip" aria-label="Tema scuro/chiaro">🌙 Dark</button>
+              </nav>
+            </div>
+          </header>
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}

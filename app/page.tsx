@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Toolbar from "./components/Toolbar";
@@ -6,7 +5,6 @@ import GameCard, { Deal } from "./components/GameCard";
 import { STORES } from "./constants";
 import LiveAudioPlayer from "./components/LiveAudioPlayer";
 
-/* Utilities */
 const SKELETON = Array.from({ length: 12 }, (_, i) => i);
 
 function useDebounced<T>(value: T, delay = 180) {
@@ -20,7 +18,7 @@ function useDebounced<T>(value: T, delay = 180) {
 
 function getHiResThumb(thumbUrl: string): string {
   try {
-    const m = thumbUrl?.match(/steam\/apps\/(\d+)\//i);
+    const m = thumbUrl?.match(/steam\/apps\/(\\d+)\\//i);
     if (m?.[1]) return `https://cdn.cloudflare.steamstatic.com/steam/apps/${m[1]}/header.jpg`;
   } catch {}
   return thumbUrl;
@@ -41,7 +39,6 @@ export default function Home() {
   const PAGE_SIZE = 12;
   const [page, setPage] = useState(1);
 
-  // fetch multi-store
   useEffect(() => {
     const controller = new AbortController();
     (async () => {
@@ -81,7 +78,6 @@ export default function Home() {
     return () => controller.abort();
   }, []);
 
-  // filtra + ordina
   const filtered = useMemo(() => {
     let list = deals
       .filter((d) => {
@@ -106,7 +102,6 @@ export default function Home() {
     return list;
   }, [deals, qDeb, maxPrice, minDiscount, sort, activeStores]);
 
-  // paginazione
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const start = (currentPage - 1) * PAGE_SIZE;
@@ -119,7 +114,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen relative overflow-hidden">
-      {/* HERO centrato: NESSUN MENU QUI */}
       <section className="text-center px-6 pt-16 md:pt-20 pb-6">
         <img src="/logo.svg" alt="SkorpioGamers 3050" className="logo" />
         <h1 className="hero-title">⚡ SkorpioGamers 3050</h1>
@@ -128,12 +122,9 @@ export default function Home() {
           <span className="font-semibold" style={{color: "#a788ff"}}>GOG</span>,{" "}
           <span className="font-semibold" style={{color: "#ff6b6b"}}>Humble</span>, Epic — live, cyberpunk e pronte a farti risparmiare.
         </p>
-
-        {/* Player audio live (solo Play/Stop) */}
         <LiveAudioPlayer videoId="bWXl_C1UP54" />
       </section>
 
-      {/* TOOLBAR */}
       <section className="container">
         <Toolbar
           query={query}
@@ -152,7 +143,6 @@ export default function Home() {
         />
       </section>
 
-      {/* GRID */}
       <section className="container py-10">
         <h2 className="text-center text-xl font-bold mb-4">🎮 Top Offerte Live</h2>
 
@@ -192,7 +182,6 @@ export default function Home() {
         )}
       </section>
 
-      {/* CTA */}
       <section className="text-center py-16">
         <h3 className="text-2xl font-bold">💌 Non perdere i super sconti</h3>
         <p className="muted mt-2">
