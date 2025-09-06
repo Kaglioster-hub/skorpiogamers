@@ -20,8 +20,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it" suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          {/* Header minimale: solo nav + switch tema */}
-          <header className="py-4 flex items-center justify-center">
+          {/* Header semplificato */}
+          <header className="py-4 flex items-center justify-center gap-6">
+            {/* Titolo testuale senza logo */}
+            <span className="font-bold text-lg text-cyan-400">
+              SkorpioGamers 3050
+            </span>
+
+            {/* Menu di navigazione */}
             <nav className="flex items-center gap-3">
               <Link href="/trending"   className="chip">🔥 Trending</Link>
               <Link href="/wishlist"   className="chip">⭐ Wishlist</Link>
