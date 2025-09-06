@@ -1,3 +1,4 @@
+// app/page.tsx
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Toolbar from "./components/Toolbar";
@@ -53,16 +54,19 @@ export default function Home() {
         const res = await Promise.all(urls.map((u) => fetch(u, { signal: controller.signal })));
         const json = await Promise.all(res.map((r) => (r.ok ? r.json() : [])));
 
-        const merged: Deal[] = json.flat().map((d: any) => ({
-          title: d.title,
-          salePrice: parseFloat(d.salePrice),
-          fullPrice: parseFloat(d.normalPrice),
-          savings: parseFloat(d.savings),
-          url: `https://www.cheapshark.com/redirect?dealID=${d.dealID}`,
-          thumb: getHiResThumb(d.thumb),
-          store: STORES.find((s) => s.id === parseInt(d.storeID))?.name ?? "Store",
-          slug: d.dealID,
-        })).filter((d: Deal) => d.title && d.salePrice > 0);
+        const merged: Deal[] = json
+          .flat()
+          .map((d: any) => ({
+            title: d.title,
+            salePrice: parseFloat(d.salePrice),
+            fullPrice: parseFloat(d.normalPrice),
+            savings: parseFloat(d.savings),
+            url: `https://www.cheapshark.com/redirect?dealID=${d.dealID}`,
+            thumb: getHiResThumb(d.thumb),
+            store: STORES.find((s) => s.id === parseInt(d.storeID))?.name ?? "Store",
+            slug: d.dealID,
+          }))
+          .filter((d: Deal) => d.title && d.salePrice > 0);
 
         setDeals(merged);
       } catch (e) {
@@ -115,7 +119,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen relative overflow-hidden">
-      {/* HERO centrato */}
+      {/* HERO centrato: NESSUN MENU QUI */}
       <section className="text-center px-6 pt-16 md:pt-20 pb-6">
         <img src="/logo.svg" alt="SkorpioGamers 3050" className="logo" />
         <h1 className="hero-title">⚡ SkorpioGamers 3050</h1>
@@ -126,7 +130,7 @@ export default function Home() {
         </p>
 
         {/* Player audio live (solo Play/Stop) */}
-      <LiveAudioPlayer videoId="bWXl_C1UP54" />
+        <LiveAudioPlayer videoId="bWXl_C1UP54" />
       </section>
 
       {/* TOOLBAR */}
