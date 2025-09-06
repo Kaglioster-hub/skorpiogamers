@@ -126,10 +126,7 @@ export default function Home() {
         </p>
 
         {/* Player audio live (solo Play/Stop) */}
-        <LiveAudioPlayer
-          videoId="bWXl_C1UP54"
-          autostartOnInteraction
-        />
+      <LiveAudioPlayer videoId="bWXl_C1UP54" />
       </section>
 
       {/* TOOLBAR */}
