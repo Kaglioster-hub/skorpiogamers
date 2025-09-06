@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import Toolbar from "./components/Toolbar";
 import GameCard, { Deal } from "./components/GameCard";
 import { STORES } from "./constants";
-import LiveAudioPlayer from "./components/LiveAudioPlayer"; // ⬅️ aggiunto
+import LiveAudioPlayer from "./components/LiveAudioPlayer";
 
 /* Utilities */
 const SKELETON = Array.from({ length: 12 }, (_, i) => i);
@@ -47,11 +47,9 @@ export default function Home() {
       try {
         setLoading(true);
         setErr(null);
-
         const urls = STORES.map(
           (s) => `https://www.cheapshark.com/api/1.0/deals?storeID=${s.id}&upperPrice=60&pageSize=60`
         );
-
         const res = await Promise.all(urls.map((u) => fetch(u, { signal: controller.signal })));
         const json = await Promise.all(res.map((r) => (r.ok ? r.json() : [])));
 
@@ -120,14 +118,18 @@ export default function Home() {
       {/* HERO centrato */}
       <section className="text-center px-6 pt-16 md:pt-20 pb-6">
         <img src="/logo.svg" alt="SkorpioGamers 3050" className="logo" />
-        {/* Mini-player audio live (YouTube) */}
-        <LiveAudioPlayer videoId="bWXl_C1UP54" />
         <h1 className="hero-title">⚡ SkorpioGamers 3050</h1>
         <p className="hero-subtitle">
           Offerte reali da <span className="font-semibold" style={{color: "var(--primary)"}}>Steam</span>,{" "}
           <span className="font-semibold" style={{color: "#a788ff"}}>GOG</span>,{" "}
           <span className="font-semibold" style={{color: "#ff6b6b"}}>Humble</span>, Epic — live, cyberpunk e pronte a farti risparmiare.
         </p>
+
+        {/* Player audio live (solo Play/Stop) */}
+        <LiveAudioPlayer
+          videoId="bWXl_C1UP54"
+          autostartOnInteraction
+        />
       </section>
 
       {/* TOOLBAR */}
