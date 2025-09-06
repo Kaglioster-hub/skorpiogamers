@@ -1,3 +1,4 @@
+// app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -21,18 +22,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it" suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          {/* Header minimale, una sola riga, niente logo */}
-          <header className="py-4 flex items-center justify-center gap-6">
-            <span className="font-bold text-lg text-cyan-400">
-              SkorpioGamers 3050
-            </span>
-
-            <nav className="flex items-center gap-3" role="navigation" aria-label="Main">
-              <Link href="/trending"   className="chip">🔥 Trending</Link>
-              <Link href="/wishlist"   className="chip">⭐ Wishlist</Link>
-              <Link href="/newsletter" className="chip">📧 Newsletter</Link>
-              <button id="theme-toggle" className="chip">🌙 Dark</button>
-            </nav>
+          {/* Header minimale: SOLO menu (niente logo/titolo) */}
+          <header className="py-4 border-b border-neutral-900/60">
+            <div className="mx-auto max-w-6xl px-6 flex items-center justify-center">
+              <nav className="flex items-center gap-3" aria-label="Navigazione principale">
+                <Link href="/trending" className="chip">🔥 Trending</Link>
+                <Link href="/wishlist" className="chip">⭐ Wishlist</Link>
+                <Link href="/newsletter" className="chip">📧 Newsletter</Link>
+                <button id="theme-toggle" className="chip" aria-label="Tema scuro/chiaro">
+                  🌙 Dark
+                </button>
+              </nav>
+            </div>
           </header>
 
           {children}
