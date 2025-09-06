@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import Toolbar from "./components/Toolbar";
 import GameCard, { Deal } from "./components/GameCard";
 import { STORES } from "./constants";
+import LiveAudioPlayer from "./components/LiveAudioPlayer"; // ⬅️ aggiunto
 
 /* Utilities */
 const SKELETON = Array.from({ length: 12 }, (_, i) => i);
@@ -119,6 +120,8 @@ export default function Home() {
       {/* HERO centrato */}
       <section className="text-center px-6 pt-16 md:pt-20 pb-6">
         <img src="/logo.svg" alt="SkorpioGamers 3050" className="logo" />
+        {/* Mini-player audio live (YouTube) */}
+        <LiveAudioPlayer videoId="bWXl_C1UP54" />
         <h1 className="hero-title">⚡ SkorpioGamers 3050</h1>
         <p className="hero-subtitle">
           Offerte reali da <span className="font-semibold" style={{color: "var(--primary)"}}>Steam</span>,{" "}
@@ -197,5 +200,3 @@ export default function Home() {
     </main>
   );
 }
-
-
