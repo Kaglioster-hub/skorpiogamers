@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Link from "next/link";
 import ThemeProvider from "./ThemeProvider";
 
 export const metadata: Metadata = {
@@ -19,6 +20,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it" suppressHydrationWarning>
       <body>
         <ThemeProvider>
+          {/* Header minimale: solo nav + switch tema */}
+          <header className="py-4 flex items-center justify-center">
+            <nav className="flex items-center gap-3">
+              <Link href="/trending"   className="chip">🔥 Trending</Link>
+              <Link href="/wishlist"   className="chip">⭐ Wishlist</Link>
+              <Link href="/newsletter" className="chip">📧 Newsletter</Link>
+              <button id="theme-toggle" className="chip">🌙 Dark</button>
+            </nav>
+          </header>
+
           {children}
         </ThemeProvider>
       </body>
