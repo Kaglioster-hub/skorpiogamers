@@ -1,0 +1,18 @@
+# Default: LF per i file di testo
+* text=auto eol=lf
+
+# Script Windows che richiedono CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Mantieni SVG come testo (LF), immagini binarie
+*.svg  text eol=lf
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+
+# Non alterare lockfile
+package-lock.json -text
