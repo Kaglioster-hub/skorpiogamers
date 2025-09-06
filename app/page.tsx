@@ -18,7 +18,7 @@ function useDebounced<T>(value: T, delay = 180) {
 
 function getHiResThumb(thumbUrl: string): string {
   try {
-    const m = thumbUrl?.match(/steam\/apps\/(\\d+)\\//i);
+    const m = thumbUrl?.match(/steam\/apps\/(\d+)\//i);
     if (m?.[1]) return `https://cdn.cloudflare.steamstatic.com/steam/apps/${m[1]}/header.jpg`;
   } catch {}
   return thumbUrl;
@@ -192,4 +192,5 @@ export default function Home() {
     </main>
   );
 }
+
 
