@@ -5,7 +5,8 @@ import ThemeProvider from "./ThemeProvider";
 
 export const metadata: Metadata = {
   title: "SkorpioGamers 3050",
-  description: "Le migliori offerte reali da Steam, GOG, Humble, Epic — live e filtrabili.",
+  description:
+    "Le migliori offerte reali da Steam, GOG, Humble, Epic — live e filtrabili.",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -20,15 +21,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it" suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          {/* Header semplificato */}
+          {/* Header minimale, una sola riga, niente logo */}
           <header className="py-4 flex items-center justify-center gap-6">
-            {/* Titolo testuale senza logo */}
             <span className="font-bold text-lg text-cyan-400">
               SkorpioGamers 3050
             </span>
 
-            {/* Menu di navigazione */}
-            <nav className="flex items-center gap-3">
+            <nav className="flex items-center gap-3" role="navigation" aria-label="Main">
               <Link href="/trending"   className="chip">🔥 Trending</Link>
               <Link href="/wishlist"   className="chip">⭐ Wishlist</Link>
               <Link href="/newsletter" className="chip">📧 Newsletter</Link>
